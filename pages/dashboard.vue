@@ -38,64 +38,7 @@
         </div>
 
         <!-- Records Table -->
-        <div class="p-4 bg-white rounded-lg shadow">
-            <h2 class="pb-4 text-lg font-semibold text-gray-500">Records</h2>
-            <div class="h-px mb-6 bg-gradient-to-r from-orange-300 to-orange-500"></div>
-            <table class="w-full text-sm table-auto">
-                <thead>
-                    <tr class="text-sm leading-normal">
-                        <th class="px-4 py-2 font-bold text-left uppercase border-b text-grey-light">Number
-                        </th>
-                        <th class="px-4 py-2 font-bold text-left uppercase border-b text-grey-light">
-                            Customer
-                        </th>
-                        <th class="px-4 py-2 font-bold text-left uppercase border-b text-grey-light">Status
-                        </th>
-                        <th class="px-4 py-2 font-bold text-left uppercase border-b text-grey-light">Total
-                            Price
-                        </th>
-                        <th class="px-4 py-2 font-bold text-left uppercase border-b text-grey-light">Order
-                            Date
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <tr class="hover:bg-grey-lighter" data-status="complete">
-
-                        <td class="px-4 py-2 border-b">ORDE5789</td>
-                        <td class="px-4 py-2 border-b">muriithi</td>
-                        <td class="px-4 py-2 border-b">Cancelled</td>
-                        <td class="px-4 py-2 border-b">kes 1500</td>
-                        <td class="px-4 py-2 border-b">4th december 2024</td>
-                    </tr>
-                    <tr class="hover:bg-grey-lighter" data-status="complete">
-
-                        <td class="px-4 py-2 border-b">ORDE5789</td>
-                        <td class="px-4 py-2 border-b">muriithi</td>
-                        <td class="px-4 py-2 border-b">Cancelled</td>
-                        <td class="px-4 py-2 border-b">kes 1500</td>
-                        <td class="px-4 py-2 border-b">4th december 2024</td>
-                    </tr>
-
-                    <tr class="hover:bg-grey-lighter" data-status="complete">
-
-                        <td class="px-4 py-2 border-b">ORDE5789</td>
-                        <td class="px-4 py-2 border-b">muriithi</td>
-                        <td class="px-4 py-2 border-b">Cancelled</td>
-                        <td class="px-4 py-2 border-b">kes 1500</td>
-                        <td class="px-4 py-2 border-b">4th december 2024</td>
-                    </tr>
-                    <tr class="hover:bg-grey-lighter" data-status="complete">
-
-                        <td class="px-4 py-2 border-b">ORDE5789</td>
-                        <td class="px-4 py-2 border-b">muriithi</td>
-                        <td class="px-4 py-2 border-b">Cancelled</td>
-                        <td class="px-4 py-2 border-b">kes 1500</td>
-                        <td class="px-4 py-2 border-b">4th december 2024</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <DataTable :data="tableData" />
     </div>
 </template>
 
@@ -111,6 +54,11 @@ const filterTable = (type: string) => {
 
 //dummy data:Fetch this data from endpoint
 
+const tableData = ref([
+    { number: 'ORDE5789', customer: 'Muriithi', status: 'Cancelled', totalPrice: 'KES 1500', orderDate: '4th December 2024' },
+    { number: 'ORDE5790', customer: 'John Doe', status: 'Complete', totalPrice: 'KES 2500', orderDate: '5th December 2024' },
+    { number: 'ORDE5791', customer: 'Jane Doe', status: 'In Progress', totalPrice: 'KES 3500', orderDate: '6th December 2024' },
+]);
 const totalStats = ref([
     { name: 'Complete', value: 3 },
     { name: 'Partials', value: 0 },
