@@ -6,96 +6,9 @@
         </div>
 
         <div class="flex flex-wrap flex-1 p-4 space-x-0 space-y-2 md:space-x-4 md:space-y-0">
-            <div class="flex-1 p-4 bg-white rounded-lg shadow md:w-1/2">
-                <h2 class="pb-1 text-lg font-semibold text-gray-700">Total Deliveries</h2>
-                <div class="my-1"></div>
-                <div class="flex flex-wrap gap-x-4 gap-y-4">
-                    <div class="w-full md:w-[calc(50%-0.5rem)] bg-gray-100 p-4 shadow rounded-lg"
-                        style="height: 150px;">
-                        <h2 class="pb-1 text-lg font-semibold text-gray-700">Complete</h2>
-                        <div class="flex items-center justify-between mt-4">
-                            <span class="text-lg font-bold text-gray-700">0</span>
-                            <i class="text-xl text-gray-500 fas fa-store"></i>
-                        </div>
-                    </div>
-                    <div class="w-full md:w-[calc(50%-0.5rem)] bg-gray-100 p-4 shadow rounded-lg"
-                        style="height: 150px;">
-                        <h2 class="pb-1 text-lg font-semibold text-gray-700">Partials</h2>
-                        <div class="flex items-center justify-between mt-4">
-                            <span class="text-lg font-bold text-gray-700">0</span>
-                            <i class="text-xl text-gray-500 fas fa-store"></i>
+            <DeliveryStats title="Total Deliveries" :stats="totalStats" />
 
-                        </div>
-                    </div>
-                    <div class="w-full md:w-[calc(50%-0.5rem)] bg-gray-100 p-4 shadow rounded-lg"
-                        style="height: 150px;">
-                        <h2 class="pb-1 text-lg font-semibold text-gray-700">Cancelled</h2>
-                        <div class="flex items-center justify-between mt-4">
-                            <span class="text-lg font-bold text-gray-700">0</span>
-                            <i class="text-xl text-gray-500 fas fa-store"></i>
-
-                        </div>
-                    </div>
-                    <div class="w-full md:w-[calc(50%-0.5rem)] bg-gray-100 p-4 shadow rounded-lg"
-                        style="height: 150px;">
-                        <h2 class="pb-1 text-lg font-semibold text-gray-700">Failed</h2>
-                        <div class="flex items-center justify-between mt-4">
-                            <span class="text-lg font-bold text-gray-700">0</span>
-                            <i class="text-xl text-gray-500 fas fa-store"></i>
-
-                        </div>
-                    </div>
-
-
-
-
-                </div>
-            </div>
-
-            <div class="flex-1 p-4 bg-white rounded-lg shadow md:w-1/2">
-                <h2 class="pb-1 text-lg font-semibold text-gray-700">Today Deliveries</h2>
-                <div class="my-1"></div>
-                <div class="flex flex-wrap gap-x-4 gap-y-4">
-                    <div class="w-full md:w-[calc(50%-0.5rem)] bg-gray-100 p-4 shadow rounded-lg"
-                        style="height: 150px;">
-                        <h2 class="pb-1 text-lg font-semibold text-gray-700">Complete</h2>
-                        <div class="flex items-center justify-between mt-4">
-                            <span class="text-lg font-bold text-gray-700">0</span>
-                            <i class="text-xl text-gray-500 fas fa-store"></i>
-                        </div>
-                    </div>
-
-                    <div class="w-full md:w-[calc(50%-0.5rem)] bg-gray-100 p-4 shadow rounded-lg"
-                        style="height: 150px;">
-                        <h2 class="pb-1 text-lg font-semibold text-gray-700">Partials</h2>
-                        <div class="flex items-center justify-between mt-4">
-                            <span class="text-lg font-bold text-gray-700">0</span>
-                            <i class="text-xl text-gray-500 fas fa-store"></i>
-
-                        </div>
-                    </div>
-                    <div class="w-full md:w-[calc(50%-0.5rem)] bg-gray-100 p-4 shadow rounded-lg"
-                        style="height: 150px;">
-                        <h2 class="pb-1 text-lg font-semibold text-gray-700">Cancelled</h2>
-                        <div class="flex items-center justify-between mt-4">
-                            <span class="text-lg font-bold text-gray-700">0</span>
-                            <i class="text-xl text-gray-500 fas fa-store"></i>
-
-                        </div>
-                    </div>
-                    <div class="w-full md:w-[calc(50%-0.5rem)] bg-gray-100 p-4 shadow rounded-lg"
-                        style="height: 150px;">
-                        <h2 class="pb-1 text-lg font-semibold text-gray-700 ">Failed</h2>
-                        <div class="flex items-center justify-between mt-4">
-                            <span class="text-lg font-bold text-gray-700">0</span>
-                            <i class="text-xl text-gray-500 fas fa-store"></i>
-
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
+            <DeliveryStats title="Today Deliveries" :stats="todayStats" />
         </div>
 
         <!-- Filters -->
@@ -196,7 +109,22 @@ const filterTable = (type: string) => {
 
 }
 
- 
+//dummy data:Fetch this data from endpoint
+
+const totalStats = ref([
+    { name: 'Complete', value: 3 },
+    { name: 'Partials', value: 0 },
+    { name: 'Cancelled', value: 0 },
+    { name: 'Failed', value: 0 }
+]);
+
+const todayStats = ref([
+    { name: 'Complete', value: 0 },
+    { name: 'Partials', value: 0 },
+    { name: 'Cancelled', value: 0 },
+    { name: 'Failed', value: 0 }
+]);
+
 </script>
 
 <style scoped>
