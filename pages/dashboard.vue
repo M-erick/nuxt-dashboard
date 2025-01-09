@@ -7,72 +7,91 @@
 
         <div class="flex flex-wrap flex-1 p-4 space-x-0 space-y-2 md:space-x-4 md:space-y-0">
             <DeliveryStats title="Total Deliveries" :stats="totalStats" />
-
             <DeliveryStats title="Today Deliveries" :stats="todayStats" />
         </div>
 
         <!-- Filters -->
         <div class="flex items-center justify-center bg-gray-100">
             <div class="flex justify-center w-1/2 m-6 bg-white rounded-md shadow">
-                <button :class="{ 'active-button': activeButton === 'all' }"
+                <button
+                    :class="{ 'active-button': activeButton === 'all' }"
                     class="px-6 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent"
-                    @click="activeButton = 'all'; filterTable('all')">
+                    @click="filterTable('all')"
+                >
                     All
                 </button>
-                <button :class="{ 'active-button': activeButton === 'partials' }"
+                <button
+                    :class="{ 'active-button': activeButton === 'partials' }"
                     class="px-6 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent"
-                    @click="activeButton = 'partials'; filterTable('partials')">
+                    @click="filterTable('partials')"
+                >
                     Partials
                 </button>
-                <button :class="{ 'active-button': activeButton === 'complete' }"
+                <button
+                    :class="{ 'active-button': activeButton === 'complete' }"
                     class="px-6 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent"
-                    @click="activeButton = 'complete'; filterTable('complete')">
+                    @click="filterTable('complete')"
+                >
                     Complete
                 </button>
-                <button :class="{ 'active-button': activeButton === 'cancelled' }"
+                <button
+                    :class="{ 'active-button': activeButton === 'cancelled' }"
                     class="px-6 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent"
-                    @click="activeButton = 'cancelled'; filterTable('cancelled')">
+                    @click="filterTable('cancelled')"
+                >
                     Cancelled
                 </button>
             </div>
         </div>
 
-        <!-- Records Table -->
-        <DataTable :data="tableData" />
+      
+        <DataTable :data="filteredTableData" />
     </div>
 </template>
 
 <script lang="ts" setup>
+const totalStats = ref<{ name: string; value: number }[]>([]);
+const todayStats = ref<{ name: string; value: number }[]>([]);
+const tableData = ref<any[]>([]);
+const activeButton = ref<string | null>('all');
 
-const activeButton = ref<string | null>(null);
+const fetchData = async () => {
+  try {
+    const { data: todayStatsData, error: todayStatsError } = await useFetch('/api/todayStats');
+    const { data: tableDataResponse, error: tableError } = await useFetch('/api/tableData');
 
+    if (todayStatsError.value) {
+      console.error('Error fetching today stats data:', todayStatsError.value);
+    } else if (todayStatsData.value) {
+      const { todayStats: fetchedTodayStats } = todayStatsData.value;
+      todayStats.value = fetchedTodayStats || [];
+      totalStats.value = fetchedTodayStats || [];
+    }
 
-const filterTable = (type: string) => {
-    activeButton.value = type;
+    if (tableError.value) {
+      console.error('Error fetching table data:', tableError.value);
+    } else if (tableDataResponse.value) {
+      tableData.value = tableDataResponse.value || [];
+    }
+  } catch (error) {
+    console.error('Error during data fetch:', error);
+  }
+};
 
-}
+onMounted(() => {
+  fetchData();
+});
 
-//dummy data:Fetch this data from endpoint
+const filterTable = (filter: string) => {
+  activeButton.value = filter;
+};
 
-const tableData = ref([
-    { number: 'ORDE5789', customer: 'Muriithi', status: 'Cancelled', totalPrice: 'KES 1500', orderDate: '4th December 2024' },
-    { number: 'ORDE5790', customer: 'John Doe', status: 'Complete', totalPrice: 'KES 2500', orderDate: '5th December 2024' },
-    { number: 'ORDE5791', customer: 'Jane Doe', status: 'In Progress', totalPrice: 'KES 3500', orderDate: '6th December 2024' },
-]);
-const totalStats = ref([
-    { name: 'Complete', value: 3 },
-    { name: 'Partials', value: 0 },
-    { name: 'Cancelled', value: 0 },
-    { name: 'Failed', value: 0 }
-]);
-
-const todayStats = ref([
-    { name: 'Complete', value: 0 },
-    { name: 'Partials', value: 0 },
-    { name: 'Cancelled', value: 0 },
-    { name: 'Failed', value: 0 }
-]);
-
+const filteredTableData = computed(() => {
+  if (activeButton.value === 'all') {
+    return tableData.value;
+  }
+  return tableData.value.filter((item) => item.status.toLowerCase() === activeButton.value);
+});
 </script>
 
 <style scoped>
