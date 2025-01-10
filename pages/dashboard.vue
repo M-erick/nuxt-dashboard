@@ -13,84 +13,92 @@
         <!-- Filters -->
         <div class="flex items-center justify-center bg-gray-100">
             <div class="flex justify-center w-1/2 m-6 bg-white rounded-md shadow">
-                <button
-                    :class="{ 'active-button': activeButton === 'all' }"
+                <button :class="{ 'active-button': activeButton === 'all' }"
                     class="px-6 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent"
-                    @click="filterTable('all')"
-                >
+                    @click="filterTable('all')">
                     All
                 </button>
-                <button
-                    :class="{ 'active-button': activeButton === 'partials' }"
+                <button :class="{ 'active-button': activeButton === 'partials' }"
                     class="px-6 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent"
-                    @click="filterTable('partials')"
-                >
+                    @click="filterTable('partials')">
                     Partials
                 </button>
-                <button
-                    :class="{ 'active-button': activeButton === 'complete' }"
+                <button :class="{ 'active-button': activeButton === 'complete' }"
                     class="px-6 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent"
-                    @click="filterTable('complete')"
-                >
+                    @click="filterTable('complete')">
                     Complete
                 </button>
-                <button
-                    :class="{ 'active-button': activeButton === 'cancelled' }"
+                <button :class="{ 'active-button': activeButton === 'cancelled' }"
                     class="px-6 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent"
-                    @click="filterTable('cancelled')"
-                >
+                    @click="filterTable('cancelled')">
                     Cancelled
                 </button>
             </div>
         </div>
 
-      
         <DataTable :data="filteredTableData" />
     </div>
 </template>
 
 <script lang="ts" setup>
+import { ref, computed, onMounted } from 'vue';
+const router = useRouter();
+const nuxtApp = useNuxtApp();
 const totalStats = ref<{ name: string; value: number }[]>([]);
 const todayStats = ref<{ name: string; value: number }[]>([]);
 const tableData = ref<any[]>([]);
 const activeButton = ref<string | null>('all');
 
+const isLoggedIn = computed(() => {
+    if (nuxtApp.isClient) {
+        return localStorage.getItem('accessToken') !== null;
+    }
+    return false;
+});
+
+if (!isLoggedIn.value) {
+    router.push('/login');
+}
+
 const fetchData = async () => {
-  try {
-    const { data: todayStatsData, error: todayStatsError } = await useFetch('/api/todayStats');
-    const { data: tableDataResponse, error: tableError } = await useFetch('/api/tableData');
+    try {
+        const { data: todayStatsData, error: todayStatsError } = await useFetch('/api/todayStats');
+        const { data: tableDataResponse, error: tableError } = await useFetch('/api/tableData');
 
-    if (todayStatsError.value) {
-      console.error('Error fetching today stats data:', todayStatsError.value);
-    } else if (todayStatsData.value) {
-      const { todayStats: fetchedTodayStats } = todayStatsData.value;
-      todayStats.value = fetchedTodayStats || [];
-      totalStats.value = fetchedTodayStats || [];
-    }
+        if (todayStatsError.value) {
+            console.error('Error fetching today stats data:', todayStatsError.value);
+        } else if (todayStatsData.value) {
+            const { todayStats: fetchedTodayStats } = todayStatsData.value;
+            todayStats.value = fetchedTodayStats || [];
+            totalStats.value = fetchedTodayStats || [];
+        }
 
-    if (tableError.value) {
-      console.error('Error fetching table data:', tableError.value);
-    } else if (tableDataResponse.value) {
-      tableData.value = tableDataResponse.value || [];
+        if (tableError.value) {
+            console.error('Error fetching table data:', tableError.value);
+        } else if (tableDataResponse.value) {
+            tableData.value = tableDataResponse.value || [];
+        }
+    } catch (error) {
+        console.error('Error during data fetch:', error);
     }
-  } catch (error) {
-    console.error('Error during data fetch:', error);
-  }
 };
 
 onMounted(() => {
-  fetchData();
+    if (nuxtApp.isClient && !isLoggedIn.value) {
+        router.push('/login');
+    }
+    fetchData();
 });
 
 const filterTable = (filter: string) => {
-  activeButton.value = filter;
+    activeButton.value = filter;
 };
 
 const filteredTableData = computed(() => {
-  if (activeButton.value === 'all') {
-    return tableData.value;
-  }
-  return tableData.value.filter((item) => item.status.toLowerCase() === activeButton.value);
+    if (activeButton.value === 'all') {
+        return tableData.value;
+    }
+    return tableData.value.filter((item) => item.status.toLowerCase() === activeButton.value);
 });
 </script>
 
