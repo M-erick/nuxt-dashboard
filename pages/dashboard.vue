@@ -39,9 +39,11 @@
         <DataTable :data="filteredTableData" />
     </div>
 </template>
-
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onBeforeMount } from 'vue';
+import { useRouter } from 'vue-router';
+import { useNuxtApp } from '#app';
+
 const router = useRouter();
 const nuxtApp = useNuxtApp();
 const totalStats = ref<{ name: string; value: number }[]>([]);
@@ -49,58 +51,55 @@ const todayStats = ref<{ name: string; value: number }[]>([]);
 const tableData = ref<any[]>([]);
 const activeButton = ref<string | null>('all');
 
+// Check if logged in (only on client-side)
 const isLoggedIn = computed(() => {
-    if (nuxtApp.isClient) {
-        return localStorage.getItem('accessToken') !== null;
-    }
-    return false;
+  if (nuxtApp.isClient) {
+    return localStorage.getItem('accessToken') !== null;
+  }n
+  return false;
 });
 
-if (!isLoggedIn.value) {
+onBeforeMount(() => {
+  if (nuxtApp.isClient && !isLoggedIn.value) {
     router.push('/login');
-}
+  }
+});
 
 const fetchData = async () => {
-    try {
-        const { data: todayStatsData, error: todayStatsError } = await useFetch('/api/todayStats');
-        const { data: tableDataResponse, error: tableError } = await useFetch('/api/tableData');
+  try {
+    const { data: todayStatsData, error: todayStatsError } = await useFetch('/api/todayStats');
+    const { data: tableDataResponse, error: tableError } = await useFetch('/api/tableData');
 
-        if (todayStatsError.value) {
-            console.error('Error fetching today stats data:', todayStatsError.value);
-        } else if (todayStatsData.value) {
-            const { todayStats: fetchedTodayStats } = todayStatsData.value;
-            todayStats.value = fetchedTodayStats || [];
-            totalStats.value = fetchedTodayStats || [];
-        }
-
-        if (tableError.value) {
-            console.error('Error fetching table data:', tableError.value);
-        } else if (tableDataResponse.value) {
-            tableData.value = tableDataResponse.value || [];
-        }
-    } catch (error) {
-        console.error('Error during data fetch:', error);
+    if (todayStatsError.value) {
+      console.error('Error fetching today stats data:', todayStatsError.value);
+    } else if (todayStatsData.value) {
+      const { todayStats: fetchedTodayStats } = todayStatsData.value;
+      todayStats.value = fetchedTodayStats || [];
+      totalStats.value = fetchedTodayStats || [];
     }
+
+    if (tableError.value) {
+      console.error('Error fetching table data:', tableError.value);
+    } else if (tableDataResponse.value) {
+      tableData.value = tableDataResponse.value || [];
+    }
+  } catch (error) {
+    console.error('Error during data fetch:', error);
+  }
 };
 
-onMounted(() => {
-    if (nuxtApp.isClient && !isLoggedIn.value) {
-        router.push('/login');
-    }
-    fetchData();
-});
-
 const filterTable = (filter: string) => {
-    activeButton.value = filter;
+  activeButton.value = filter;
 };
 
 const filteredTableData = computed(() => {
-    if (activeButton.value === 'all') {
-        return tableData.value;
-    }
-    return tableData.value.filter((item) => item.status.toLowerCase() === activeButton.value);
+  if (activeButton.value === 'all') {
+    return tableData.value;
+  }
+  return tableData.value.filter((item) => item.status.toLowerCase() === activeButton.value);
 });
 </script>
+
 
 <style scoped>
 .active-button {

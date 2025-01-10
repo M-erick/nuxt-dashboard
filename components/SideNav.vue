@@ -18,7 +18,7 @@
                 <i class="mr-2 fas fa-exchange-alt"></i> Transactions
             </NuxtLink>
         </nav>
-        <NuxtLink to="/logout"
+        <NuxtLink to="/login"
             class="block text-gray-500 py-2.5 px-4 my-4 rounded hover:text-[#FFA016] active:bg-[#F9FAFB]">
             <i class="mr-2 fas fa-sign-out-alt"></i> Log out
         </NuxtLink>
